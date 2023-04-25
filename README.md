@@ -1,5 +1,7 @@
 # job4j_accidents
 
+[![build](https://github.com/SergeyPoletaev/job4j_accidents/workflows/build/badge.svg)](https://github.com/SergeyPoletaev/job4j_accidents/actions)
+
 ### Описание проекта:
 
 В системе существуют две роли - обычные пользователи и автоинспекторы.  
