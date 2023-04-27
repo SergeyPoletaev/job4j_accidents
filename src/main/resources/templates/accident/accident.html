@@ -56,7 +56,7 @@
                 <b>Адрес:</b>
                 <p class="card-text" th:text="${accident.address}"></p>
                 <div class="row">
-                    <a class="btn btn-success" role="button" th:href="@{|/accident/update/${accident.id}|}">Редактировать</a>
+                    <a class="btn btn-success" role="button" th:href="@{|/accident/update?id=${accident.id}|}">Редактировать</a>
                 </div>
             </div>
         </div>

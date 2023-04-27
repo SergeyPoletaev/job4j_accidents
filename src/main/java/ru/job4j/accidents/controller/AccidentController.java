@@ -50,8 +50,8 @@ public class AccidentController {
         return "redirect:/accident/error";
     }
 
-    @GetMapping("/update/{id}")
-    public String viewUpdate(@PathVariable int id, Model model, RedirectAttributes attr) {
+    @GetMapping("/update")
+    public String viewUpdate(@RequestParam("id") int id, Model model, RedirectAttributes attr) {
         Optional<Accident> accidentOpt = accidentService.findById(id);
         if (accidentOpt.isPresent()) {
             model.addAttribute("accident", accidentOpt.get());
