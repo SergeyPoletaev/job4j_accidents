@@ -14,10 +14,13 @@ public class AccidentMem implements AccidentRepository {
     private final Map<Integer, Accident> accidents = new ConcurrentHashMap<>();
     private final AtomicInteger ids = new AtomicInteger();
 
-    public AccidentMem() {
-        save(new Accident(0, "Авария", "Подрезал", "Ленина д.5"));
-        save(new Accident(0, "Нарушение", "Выезд на встречку", "Петровка д.38"));
-        save(new Accident(0, "Авария", "Столкновение", "Гагарина д.1"));
+    public AccidentMem(AccidentTypeRepository type) {
+        save(new Accident(0, "Авария", "Подрезал", "Ленина д.5",
+                type.findById(1).orElseThrow()));
+        save(new Accident(0, "Нарушение", "Выезд на встречку", "Петровка д.38",
+                type.findById(2).orElseThrow()));
+        save(new Accident(0, "Авария", "Столкновение", "Гагарина д.1",
+                type.findById(3).orElseThrow()));
     }
 
     @Override
