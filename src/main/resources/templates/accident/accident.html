@@ -57,6 +57,8 @@
                 <p class="card-text" th:text="${accident.address}"></p>
                 <b>Тип:</b>
                 <p class="card-text" th:text="${accident.type.name}"></p>
+                <b>Статьи нарушения:</b>
+                <p class="card-text" th:text="${#strings.listJoin(rules, ', ')}"></p>
                 <div class="row">
                     <a class="btn btn-success" role="button" th:href="@{|/accident/update?id=${accident.id}|}">Редактировать</a>
                 </div>

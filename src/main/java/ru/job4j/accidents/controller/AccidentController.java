@@ -6,11 +6,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.model.AccidentType;
+import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.AccidentTypeService;
+import ru.job4j.accidents.service.RuleService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/accident")
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class AccidentController {
     private final AccidentService accidentService;
     private final AccidentTypeService accidentTypeService;
+    private final RuleService ruleService;
 
     @GetMapping("/accidents")
     public String viewAccidents(Model model) {
@@ -28,18 +32,16 @@ public class AccidentController {
     @GetMapping("/create")
     public String viewCreate(Model model) {
         model.addAttribute("types", accidentTypeService.findAll());
+        model.addAttribute("rules", ruleService.findAll());
         return "/accident/create";
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute Accident accident, RedirectAttributes attr) {
-        Optional<AccidentType> type = accidentTypeService.findById(accident.getType().getId());
-        if (type.isPresent()) {
-            accidentService.save(accident.setType(type.get()));
+    public String save(@ModelAttribute Accident accident, RedirectAttributes attr, HttpServletRequest req) {
+        if (accidentService.save(accident, req).getId() != 0) {
             return "redirect:/accident/accidents";
         }
-        attr.addFlashAttribute("message",
-                "Заявление не сохранено, т.к. не выбранный тип происшествия больше не существует");
+        attr.addFlashAttribute("message", "Заявление не сохранено");
         return "redirect:/accident/error";
     }
 
@@ -54,6 +56,12 @@ public class AccidentController {
         Optional<Accident> accidentOpt = accidentService.findById(id);
         if (accidentOpt.isPresent()) {
             model.addAttribute("accident", accidentOpt.get());
+            model.addAttribute("rules",
+                    accidentOpt.get().getRules().stream()
+                            .map(Rule::getName)
+                            .sorted()
+                            .collect(Collectors.toList())
+            );
             return "/accident/accident";
         }
         attr.addFlashAttribute("message", "Заявление не найдено");
@@ -65,6 +73,7 @@ public class AccidentController {
         Optional<Accident> accidentOpt = accidentService.findById(id);
         if (accidentOpt.isPresent()) {
             model.addAttribute("types", accidentTypeService.findAll());
+            model.addAttribute("rules", ruleService.findAll());
             model.addAttribute("accident", accidentOpt.get());
             return "/accident/update";
         }
@@ -73,9 +82,8 @@ public class AccidentController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Accident accident, RedirectAttributes attr) {
-        Optional<AccidentType> type = accidentTypeService.findById(accident.getType().getId());
-        if (type.isPresent() && accidentService.update(accident.setType(type.get()))) {
+    public String update(@ModelAttribute Accident accident, RedirectAttributes attr, HttpServletRequest req) {
+        if (accidentService.update(accident, req)) {
             return "redirect:/accident/accidents";
         }
         attr.addFlashAttribute("message", "При обновлении данных произошла ошибка");

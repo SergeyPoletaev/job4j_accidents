@@ -69,6 +69,13 @@
                                     th:value="${type.id}">
                             </option>
                         </select>
+                        <label for="rIds">Выберите одну или несколько статей нарушения</label>
+                        <select class="form-control" id="rIds" multiple="multiple" name="rIds">
+                            <option th:each="rule : ${rules}"
+                                    th:text="${rule.name}"
+                                    th:value="${rule.id}">
+                            </option>
+                        </select>
                     </div>
                     <button class="btn btn-success" type="submit">Сохранить</button>
                     <a class="btn btn-danger" role="button" th:href="@{/accident/accidents}">Отменить</a>
