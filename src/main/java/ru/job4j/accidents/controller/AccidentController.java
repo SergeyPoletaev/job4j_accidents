@@ -38,6 +38,11 @@ public class AccidentController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute Accident accident, RedirectAttributes attr, HttpServletRequest req) {
+        if (req.getParameterValues("rIds") == null) {
+            attr.addFlashAttribute("message",
+                    "Заявление не сохранено. Необходимо выбрать хотя бы одну статью для нарушения");
+            return "redirect:/accident/error";
+        }
         if (accidentService.save(accident, req).getId() != 0) {
             return "redirect:/accident/accidents";
         }
@@ -83,6 +88,11 @@ public class AccidentController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Accident accident, RedirectAttributes attr, HttpServletRequest req) {
+        if (req.getParameterValues("rIds") == null) {
+            attr.addFlashAttribute("message",
+                    "Заявление не обновлено. Необходимо выбрать хотя бы одну статью для нарушения");
+            return "redirect:/accident/error";
+        }
         if (accidentService.update(accident, req)) {
             return "redirect:/accident/accidents";
         }
