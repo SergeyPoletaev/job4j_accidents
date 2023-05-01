@@ -1,59 +1,57 @@
-package ru.job4j.accidents.repository;
+package ru.job4j.accidents.repository.hbm;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.assertj.core.api.SoftAssertions;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import ru.job4j.accidents.config.JdbcConfig;
-import ru.job4j.accidents.config.JdbcTestConfig;
+import ru.job4j.accidents.config.HbmTestConfig;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.jdbc.AccidentJdbcTemplate;
+import ru.job4j.accidents.repository.AccidentRepository;
 
-import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AccidentJdbcTemplateTest {
-    private static DataSource pool;
-    private static JdbcTemplate jdbc;
+class AccidentHbmTest {
+    private static SessionFactory sf;
 
     @BeforeAll
     static void init() {
-        Properties prop = new JdbcTestConfig().loadTestDbProperties();
-        JdbcConfig config = new JdbcConfig();
-        pool = config.ds(
-                prop.getProperty("jdbc.url"),
-                prop.getProperty("jdbc.username"),
-                prop.getProperty("jdbc.password"),
-                prop.getProperty("jdbc.driver")
-        );
-        jdbc = config.jdbc(pool);
+        sf = new HbmTestConfig().getSessionFactory();
     }
 
     @AfterAll
-    static void close() throws SQLException {
-        ((BasicDataSource) pool).close();
+    static void close() {
+        sf.close();
     }
 
     @BeforeEach
     void cleanDb() {
-        jdbc.update("delete from accidents_rules");
-        jdbc.update("delete from accidents");
+        Transaction tx = null;
+        try (Session session = sf.openSession()) {
+            tx = session.beginTransaction();
+            session.createNativeQuery("delete from accidents_rules").executeUpdate();
+            session.createNativeQuery("delete from accidents").executeUpdate();
+            tx.commit();
+        } catch (Exception ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw ex;
+        }
     }
 
     @Test
     void findAll() {
-        AccidentRepository repository = new AccidentJdbcTemplate(jdbc);
+        AccidentRepository repository = new AccidentHbm(new CrudRepositoryImpl(sf));
         Accident accidentDb = repository.save(new Accident()
                 .setName("a")
                 .setDescription("b")
@@ -75,7 +73,7 @@ class AccidentJdbcTemplateTest {
 
     @Test
     void findById() {
-        AccidentRepository repository = new AccidentJdbcTemplate(jdbc);
+        AccidentRepository repository = new AccidentHbm(new CrudRepositoryImpl(sf));
         Accident accidentDb = repository.save(new Accident()
                 .setName("a")
                 .setDescription("b")
@@ -97,7 +95,7 @@ class AccidentJdbcTemplateTest {
 
     @Test
     void save() {
-        AccidentRepository repository = new AccidentJdbcTemplate(jdbc);
+        AccidentRepository repository = new AccidentHbm(new CrudRepositoryImpl(sf));
         Accident accidentDb = repository.save(new Accident()
                 .setName("a")
                 .setDescription("b")
@@ -111,7 +109,7 @@ class AccidentJdbcTemplateTest {
 
     @Test
     void update() {
-        AccidentRepository repository = new AccidentJdbcTemplate(jdbc);
+        AccidentRepository repository = new AccidentHbm(new CrudRepositoryImpl(sf));
         Accident accidentDb = repository.save(new Accident()
                 .setName("a")
                 .setDescription("b")

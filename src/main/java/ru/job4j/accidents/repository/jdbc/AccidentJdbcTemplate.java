@@ -1,7 +1,6 @@
-package ru.job4j.accidents.repository;
+package ru.job4j.accidents.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
+import ru.job4j.accidents.repository.AccidentRepository;
 
 import java.sql.PreparedStatement;
 import java.util.*;
@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 @RequiredArgsConstructor
-@Primary
 public class AccidentJdbcTemplate implements AccidentRepository {
     private final static String SQL_ACCIDENT_JOIN_ACCIDENT_TYPE_ALL =
             """
