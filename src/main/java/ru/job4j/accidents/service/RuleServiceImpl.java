@@ -3,7 +3,7 @@ package ru.job4j.accidents.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.RuleRepository;
+import ru.job4j.accidents.repository.RuleDataRepository;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RuleServiceImpl implements RuleService {
-    private final RuleRepository repository;
+    private final RuleDataRepository repository;
 
     @Override
     public Collection<Rule> findAll() {

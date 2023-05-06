@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.AccidentRepository;
+import ru.job4j.accidents.repository.AccidentDataRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class AccidentServiceImpl implements AccidentService {
-    private final AccidentRepository repository;
+    private final AccidentDataRepository repository;
     private final AccidentTypeService accidentTypeService;
     private final RuleService ruleService;
 
@@ -44,7 +44,7 @@ public class AccidentServiceImpl implements AccidentService {
         Set<Rule> rules = getRules(req);
         return type.isPresent()
                 && rules != null
-                && repository.update(accident.setType(type.get()).setRules(rules));
+                && repository.save(accident.setType(type.get()).setRules(rules)).getId() != 0;
     }
 
     private Set<Rule> getRules(HttpServletRequest req) {
