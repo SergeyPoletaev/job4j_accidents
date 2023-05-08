@@ -10,6 +10,7 @@ import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.AccidentTypeService;
 import ru.job4j.accidents.service.RuleService;
+import ru.job4j.accidents.util.AuthHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -25,12 +26,14 @@ public class AccidentController {
 
     @GetMapping("/accidents")
     public String viewAccidents(Model model) {
+        AuthHelper.addUserNameToModel(model);
         model.addAttribute("accidents", accidentService.findAll());
         return "/accident/accidents";
     }
 
     @GetMapping("/create")
     public String viewCreate(Model model) {
+        AuthHelper.addUserNameToModel(model);
         model.addAttribute("types", accidentTypeService.findAll());
         model.addAttribute("rules", ruleService.findAll());
         return "/accident/create";
@@ -58,6 +61,7 @@ public class AccidentController {
 
     @GetMapping("/select/{id}")
     public String viewAccident(@PathVariable int id, Model model, RedirectAttributes attr) {
+        AuthHelper.addUserNameToModel(model);
         Optional<Accident> accidentOpt = accidentService.findById(id);
         if (accidentOpt.isPresent()) {
             model.addAttribute("accident", accidentOpt.get());
@@ -75,6 +79,7 @@ public class AccidentController {
 
     @GetMapping("/update")
     public String viewUpdate(@RequestParam("id") int id, Model model, RedirectAttributes attr) {
+        AuthHelper.addUserNameToModel(model);
         Optional<Accident> accidentOpt = accidentService.findById(id);
         if (accidentOpt.isPresent()) {
             model.addAttribute("types", accidentTypeService.findAll());
@@ -101,7 +106,8 @@ public class AccidentController {
     }
 
     @GetMapping("/error")
-    public String error() {
+    public String error(Model model) {
+        AuthHelper.addUserNameToModel(model);
         return "/accident/error";
     }
 }

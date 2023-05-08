@@ -36,6 +36,12 @@
                 <li>
                     <a class="btn btn-success" role="button" th:href="@{/accident/create}">Добавить заявление</a>
                 </li>
+                <li>
+                    <a class="nav-item nav-link" th:href="@{/auth/logout}" th:if="${username != 'Гость'}">
+                        <span th:text="${username}"></span>
+                        <span> | Выйти</span>
+                    </a>
+                </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input aria-label="Search" class="form-control mr-sm-2" placeholder="Search" type="search">
