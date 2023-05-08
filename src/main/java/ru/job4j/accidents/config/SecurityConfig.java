@@ -1,5 +1,6 @@
 package ru.job4j.accidents.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,18 +10,33 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.sql.DataSource;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String FIND_USER_IN_CUSTOM_USERS_TABLE =
+            """
+                    SELECT username, password, enabled
+                    FROM users
+                    WHERE username = ?
+                    """;
+    private static final String FIND_AUTHORITIES_USER_IN_CUSTOM_AUTHORITIES_TABLE =
+            """
+                    SELECT username, authority
+                    FROM authorities
+                    WHERE username = ?
+                    """;
+
+    private final DataSource dataSource;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        PasswordEncoder passwordEncoder = passwordEncoder();
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder)
-                .withUser("user").password(passwordEncoder.encode("123456")).roles("USER")
-                .and()
-                .withUser("admin").password(passwordEncoder.encode("123456")).roles("USER", "ADMIN");
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .usersByUsernameQuery(FIND_USER_IN_CUSTOM_USERS_TABLE)
+                .authoritiesByUsernameQuery(FIND_AUTHORITIES_USER_IN_CUSTOM_AUTHORITIES_TABLE);
     }
 
     @Override
