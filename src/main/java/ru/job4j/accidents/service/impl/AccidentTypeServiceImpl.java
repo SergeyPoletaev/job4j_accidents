@@ -1,9 +1,10 @@
-package ru.job4j.accidents.service;
+package ru.job4j.accidents.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.repository.AccidentDataTypeRepository;
+import ru.job4j.accidents.service.AccidentTypeService;
 
 import java.util.Collection;
 import java.util.Optional;

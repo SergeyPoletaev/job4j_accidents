@@ -24,9 +24,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     """;
     private static final String FIND_AUTHORITIES_USER_IN_CUSTOM_AUTHORITIES_TABLE =
             """
-                    SELECT username, authority
-                    FROM authorities
-                    WHERE username = ?
+                    SELECT u.username, a.authority
+                    FROM authorities as a
+                    JOIN users as u
+                    ON a.id = u.authority_id
+                    WHERE u.username = ?
                     """;
 
     private final DataSource dataSource;
@@ -42,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/auth/login")
+                .antMatchers("/auth/login", "/registration/**")
                 .permitAll()
                 .antMatchers("/**")
                 .hasAnyRole("ADMIN", "USER")

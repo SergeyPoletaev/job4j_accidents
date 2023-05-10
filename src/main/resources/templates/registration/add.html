@@ -51,13 +51,10 @@
     </nav>
     <div class="card" style="width: 100%">
         <div class="card-header">
-            Авторизация
+            Регистрация
         </div>
         <div class="card-body">
-            <div class="alert alert-danger" role="alert" th:if="${rslAuth}">
-                Логин или пароль введены неверно!
-            </div>
-            <form method="POST" th:action="@{/auth/login}">
+            <form method="POST" th:action="@{/registration/create}">
                 <div class="form-group">
                     <label>Логин &nbsp;&nbsp;</label>
                     <label>
@@ -70,9 +67,8 @@
                         <input class="form-control" name="password" type="password">
                     </label>
                 </div>
-                <button class="btn btn-primary" type="submit">Войти</button>
-                <a class="btn btn-secondary" role="button" th:href="@{/registration/add}">Зарегистрироваться</a>
-                <!--                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
+                <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+                <a class="btn btn-danger" role="button" th:href="@{/auth/login}">Отменить</a>
             </form>
             <b th:text="${message}"></b>
         </div>

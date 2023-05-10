@@ -44,13 +44,13 @@ public class AccidentController {
         if (req.getParameterValues("rIds") == null) {
             attr.addFlashAttribute("message",
                     "Заявление не сохранено. Необходимо выбрать хотя бы одну статью для нарушения");
-            return "redirect:/accident/error";
+            return "redirect:/errors/error";
         }
         if (accidentService.save(accident, req).getId() != 0) {
             return "redirect:/accident/accidents";
         }
         attr.addFlashAttribute("message", "Заявление не сохранено");
-        return "redirect:/accident/error";
+        return "redirect:/errors/error";
     }
 
     @PostMapping("/select")
@@ -74,7 +74,7 @@ public class AccidentController {
             return "/accident/accident";
         }
         attr.addFlashAttribute("message", "Заявление не найдено");
-        return "redirect:/accident/error";
+        return "redirect:/errors/error";
     }
 
     @GetMapping("/update")
@@ -88,7 +88,7 @@ public class AccidentController {
             return "/accident/update";
         }
         attr.addFlashAttribute("message", "Заявление не найдено");
-        return "redirect:/accident/error";
+        return "redirect:/errors/error";
     }
 
     @PostMapping("/update")
@@ -102,12 +102,7 @@ public class AccidentController {
             return "redirect:/accident/accidents";
         }
         attr.addFlashAttribute("message", "При обновлении данных произошла ошибка");
-        return "redirect:/accident/error";
+        return "redirect:/errors/error";
     }
 
-    @GetMapping("/error")
-    public String error(Model model) {
-        AuthHelper.addUserNameToModel(model);
-        return "/accident/error";
-    }
 }
