@@ -85,7 +85,7 @@ public class AccidentController {
             model.addAttribute("types", accidentTypeService.findAll());
             model.addAttribute("rules", ruleService.findAll());
             model.addAttribute("accident", accidentOpt.get());
-            return "/accident/update";
+            return "/accident/edit";
         }
         attr.addFlashAttribute("message", "Заявление не найдено");
         return "redirect:/errors/error";
