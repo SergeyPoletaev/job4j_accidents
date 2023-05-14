@@ -1,6 +1,8 @@
 package ru.job4j.accidents.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +12,6 @@ import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.AccidentTypeService;
 import ru.job4j.accidents.service.RuleService;
-import ru.job4j.accidents.util.AuthHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -25,15 +26,15 @@ public class AccidentController {
     private final RuleService ruleService;
 
     @GetMapping("/accidents")
-    public String viewAccidents(Model model) {
-        AuthHelper.addUserNameToModel(model);
+    public String viewAccidents(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("username", user.getUsername());
         model.addAttribute("accidents", accidentService.findAll());
         return "/accident/accidents";
     }
 
     @GetMapping("/create")
-    public String viewCreate(Model model) {
-        AuthHelper.addUserNameToModel(model);
+    public String viewCreate(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("username", user.getUsername());
         model.addAttribute("types", accidentTypeService.findAll());
         model.addAttribute("rules", ruleService.findAll());
         return "/accident/create";
@@ -54,14 +55,17 @@ public class AccidentController {
     }
 
     @PostMapping("/select")
-    public String select(@ModelAttribute Accident accident, RedirectAttributes attr) {
-        attr.addAttribute("id", accident.getId());
+    public String select(@RequestParam int id, RedirectAttributes attr) {
+        attr.addAttribute("id", id);
         return "redirect:/accident/select/{id}";
     }
 
     @GetMapping("/select/{id}")
-    public String viewAccident(@PathVariable int id, Model model, RedirectAttributes attr) {
-        AuthHelper.addUserNameToModel(model);
+    public String viewAccident(@PathVariable int id,
+                               Model model,
+                               RedirectAttributes attr,
+                               @AuthenticationPrincipal User user) {
+        model.addAttribute("username", user.getUsername());
         Optional<Accident> accidentOpt = accidentService.findById(id);
         if (accidentOpt.isPresent()) {
             model.addAttribute("accident", accidentOpt.get());
@@ -78,8 +82,10 @@ public class AccidentController {
     }
 
     @GetMapping("/update")
-    public String viewUpdate(@RequestParam("id") int id, Model model, RedirectAttributes attr) {
-        AuthHelper.addUserNameToModel(model);
+    public String viewUpdate(@RequestParam("id") int id,
+                             Model model,
+                             RedirectAttributes attr, @AuthenticationPrincipal User user) {
+        model.addAttribute("username", user.getUsername());
         Optional<Accident> accidentOpt = accidentService.findById(id);
         if (accidentOpt.isPresent()) {
             model.addAttribute("types", accidentTypeService.findAll());
@@ -96,7 +102,7 @@ public class AccidentController {
         if (req.getParameterValues("rIds") == null) {
             attr.addFlashAttribute("message",
                     "Заявление не обновлено. Необходимо выбрать хотя бы одну статью для нарушения");
-            return "redirect:/accident/error";
+            return "redirect:/errors/error";
         }
         if (accidentService.update(accident, req)) {
             return "redirect:/accident/accidents";

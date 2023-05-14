@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.accidents.model.User;
 import ru.job4j.accidents.service.UserService;
-import ru.job4j.accidents.util.AuthHelper;
 
 import java.util.Optional;
 
@@ -22,7 +21,7 @@ public class RegController {
 
     @GetMapping("/add")
     public String add(Model model) {
-        AuthHelper.addUserNameToModel(model);
+        model.addAttribute("username", "Гость");
         return "/registration/add";
     }
 

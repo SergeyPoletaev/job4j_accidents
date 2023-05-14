@@ -6,14 +6,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.job4j.accidents.App;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = App.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 class ErrorControllerTest {
 
@@ -26,6 +24,7 @@ class ErrorControllerTest {
     void whenGetErrorPageThenReturnView() throws Exception {
         mockMvc.perform(get("/errors/error"))
                 .andDo(print())
+                .andExpect(model().attribute("username", "user"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/errors/error"));
     }

@@ -1,4 +1,4 @@
-package ru.job4j.accidents.repository;
+package ru.job4j.accidents.repository.jdbc;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.assertj.core.api.SoftAssertions;
@@ -12,7 +12,7 @@ import ru.job4j.accidents.config.JdbcTestConfig;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.jdbc.AccidentJdbcTemplate;
+import ru.job4j.accidents.repository.AccidentRepository;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
